@@ -85,7 +85,7 @@ const AuthPage = () => {
               </button>
             </form>
           ) : (
-            /* REGISTER FORM */
+            // REGISTER FORM 
             <form onSubmit={handleRegisterSubmit} className="space-y-5">
               <div>
                 <label className="block mb-2 font-medium">
