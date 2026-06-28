@@ -2,76 +2,137 @@ import React, { useState } from "react";
 import API from "../api/authService";
 
 const AuthPage = () => {
-  // State to toggle between Login and Register forms
+  // Toggle between Login and Register
   const [isLogin, setIsLogin] = useState(true);
 
-  // State for login form data
+  // Login form state
   const [loginData, setLoginData] = useState({
     email: "",
     password: "",
   });
 
-  // State for registration form data
+  // Register form state
   const [registerData, setRegisterData] = useState({
     email: "",
     password: "",
     confirmPassword: "",
   });
 
-  // Handle login form submission
-  const handleLoginSubmit = (e) => {
-    e.preventDefault(); // Prevent page reload
-    console.log("Login:", loginData); // Log login data (replace with API call later)
+  // Handle Login
+  const handleLoginSubmit = async (e) => {
+    e.preventDefault();
+
+    try {
+      const response = await API.post("/api/auth/login", loginData);
+
+      console.log("Login Success:", response.data);
+
+      alert(response.data.message || "Login Successful");
+
+      // Next Step:
+      // Save token here after seeing backend response
+      // localStorage.setItem("token", response.data.data.token);
+
+    } catch (error) {
+      console.log(error);
+
+      alert(
+        error.response?.data?.message ||
+          "Login Failed. Please try again."
+      );
+    }
   };
 
-  // Handle registration form submission
-  const handleRegisterSubmit = (e) => {
-    e.preventDefault(); // Prevent page reload
-    console.log("Register:", registerData); // Log register data (replace with API call later)
+  // Handle Register
+  const handleRegisterSubmit = async (e) => {
+    e.preventDefault();
+
+    try {
+      const response = await API.post(
+        "/api/auth/register",
+        registerData
+      );
+
+      console.log("Register Success:", response.data);
+
+      alert(response.data.message);
+
+      // Switch back to login page
+      setIsLogin(true);
+
+      // Optional: Clear register form
+      setRegisterData({
+        email: "",
+        password: "",
+        confirmPassword: "",
+      });
+
+    } catch (error) {
+      console.log(error);
+
+      alert(
+        error.response?.data?.message ||
+          "Registration Failed."
+      );
+    }
   };
 
   return (
-    // Full viewport height, centered content with background color
     <div className="min-h-screen bg-slate-100 flex items-center justify-center p-4">
-      {/* Card container – width is now responsive: full on mobile, max 448px on larger screens */}
-      <div className="w-full max-w-md p-8 bg-white rounded-2xl">
-        {/* Heading changes based on login/register mode */}
+      <div className="w-full max-w-md p-8 bg-white rounded-2xl shadow-lg">
+
         <h2 className="text-3xl font-bold text-center mb-2">
           {isLogin ? "Welcome Back" : "Create Account"}
         </h2>
 
-        {/* Subtitle changes based on mode */}
         <p className="text-gray-500 text-center mb-8">
-          {isLogin ? "Login to continue" : "Register as a customer"}
+          {isLogin
+            ? "Login to continue"
+            : "Register as a customer"}
         </p>
 
-        {/* Conditional rendering: show Login form if isLogin true, else Register form */}
         {isLogin ? (
-          // LOGIN FORM
-          <form onSubmit={handleLoginSubmit} className="space-y-5">
+          <form
+            onSubmit={handleLoginSubmit}
+            className="space-y-5"
+          >
             <div>
-              <label className="block mb-2 font-medium">Email</label>
+              <label className="block mb-2 font-medium">
+                Email
+              </label>
+
               <input
                 type="email"
                 placeholder="Enter email"
                 className="w-full border rounded-lg px-4 py-3 focus:outline-none focus:ring-2 focus:ring-blue-500"
                 value={loginData.email}
                 onChange={(e) =>
-                  setLoginData({ ...loginData, email: e.target.value })
+                  setLoginData({
+                    ...loginData,
+                    email: e.target.value,
+                  })
                 }
+                required
               />
             </div>
 
             <div>
-              <label className="block mb-2 font-medium">Password</label>
+              <label className="block mb-2 font-medium">
+                Password
+              </label>
+
               <input
                 type="password"
                 placeholder="Enter password"
                 className="w-full border rounded-lg px-4 py-3 focus:outline-none focus:ring-2 focus:ring-blue-500"
                 value={loginData.password}
                 onChange={(e) =>
-                  setLoginData({ ...loginData, password: e.target.value })
+                  setLoginData({
+                    ...loginData,
+                    password: e.target.value,
+                  })
                 }
+                required
               />
             </div>
 
@@ -83,36 +144,55 @@ const AuthPage = () => {
             </button>
           </form>
         ) : (
-          // REGISTER FORM
-          <form onSubmit={handleRegisterSubmit} className="space-y-5">
+          <form
+            onSubmit={handleRegisterSubmit}
+            className="space-y-5"
+          >
             <div>
-              <label className="block mb-2 font-medium">Email</label>
+              <label className="block mb-2 font-medium">
+                Email
+              </label>
+
               <input
                 type="email"
                 placeholder="Enter email"
                 className="w-full border rounded-lg px-4 py-3 focus:outline-none focus:ring-2 focus:ring-blue-500"
                 value={registerData.email}
                 onChange={(e) =>
-                  setRegisterData({ ...registerData, email: e.target.value })
+                  setRegisterData({
+                    ...registerData,
+                    email: e.target.value,
+                  })
                 }
+                required
               />
             </div>
 
             <div>
-              <label className="block mb-2 font-medium">Password</label>
+              <label className="block mb-2 font-medium">
+                Password
+              </label>
+
               <input
                 type="password"
                 placeholder="Enter password"
                 className="w-full border rounded-lg px-4 py-3 focus:outline-none focus:ring-2 focus:ring-blue-500"
                 value={registerData.password}
                 onChange={(e) =>
-                  setRegisterData({ ...registerData, password: e.target.value })
+                  setRegisterData({
+                    ...registerData,
+                    password: e.target.value,
+                  })
                 }
+                required
               />
             </div>
 
             <div>
-              <label className="block mb-2 font-medium">Confirm Password</label>
+              <label className="block mb-2 font-medium">
+                Confirm Password
+              </label>
+
               <input
                 type="password"
                 placeholder="Confirm password"
@@ -124,6 +204,7 @@ const AuthPage = () => {
                     confirmPassword: e.target.value,
                   })
                 }
+                required
               />
             </div>
 
@@ -136,12 +217,12 @@ const AuthPage = () => {
           </form>
         )}
 
-        {/* Toggle between Login and Register */}
         <div className="mt-6 text-center">
           {isLogin ? (
             <p>
               Don't have an account?{" "}
               <button
+                type="button"
                 onClick={() => setIsLogin(false)}
                 className="text-blue-600 font-semibold"
               >
@@ -152,6 +233,7 @@ const AuthPage = () => {
             <p>
               Already have an account?{" "}
               <button
+                type="button"
                 onClick={() => setIsLogin(true)}
                 className="text-blue-600 font-semibold"
               >
@@ -160,6 +242,7 @@ const AuthPage = () => {
             </p>
           )}
         </div>
+
       </div>
     </div>
   );
